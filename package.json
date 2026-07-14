@@ -1,0 +1,18 @@
+{
+  "name": "kryptonik",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @kryptonik/web --filter @kryptonik/api dev",
+    "dev:web": "pnpm --filter @kryptonik/web dev",
+    "dev:api": "pnpm --filter @kryptonik/api dev",
+    "build": "pnpm --filter @kryptonik/web build && pnpm --filter @kryptonik/api build",
+    "lint": "pnpm --parallel --filter @kryptonik/web --filter @kryptonik/api lint",
+    "typecheck": "pnpm --parallel --filter @kryptonik/web --filter @kryptonik/api typecheck"
+  }
+}
