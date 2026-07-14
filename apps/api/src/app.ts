@@ -3,21 +3,14 @@ import Fastify from "fastify";
 import { healthRoutes } from "./modules/health/health.routes.js";
 
 export function buildApp() {
-  const app = Fastify({
-    logger: {
-      transport:
-        process.env.NODE_ENV === "development"
-          ? { target: "pino-pretty" }
-          : undefined,
-    },
-  });
+  const app = Fastify({ logger: true });
 
-  void app.register(cors, {
+  app.register(cors, {
     origin: process.env.WEB_ORIGIN ?? "http://localhost:3000",
     credentials: true,
   });
 
-  void app.register(healthRoutes, { prefix: "/v1/health" });
+  app.register(healthRoutes, { prefix: "/v1/health" });
 
   return app;
 }
