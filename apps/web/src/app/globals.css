@@ -18,9 +18,22 @@
 }
  
 body {
-  margin: 20;
+  margin: 0;
   min-height: 100vh;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;  
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  background:
+    radial-gradient(
+      1000px circle at 0% 0%,
+      rgba(124, 79, 217, 0.14),
+      transparent 45%
+    ),
+    radial-gradient(
+      800px circle at 100% 100%,
+      rgba(81, 43, 151, 0.10),
+      transparent 50%
+    ),
+    #09090b;
 }
  
 main {
@@ -48,13 +61,8 @@ h1 {
 }
 
 .liquid-glass {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: #121216;
+  border: 1px solid #24242c;
 }
 
 .no-scrollbar {
