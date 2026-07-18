@@ -11,7 +11,7 @@ export class UserRepository {
     return this.db.user.findUnique({ where: { email } });
   }
 
-  findByExternalId(externalId: string) {
-    return this.db.user.findUnique({ where: { externalId } });
+  findByAuthId(authId: string) {
+    return this.db.user.findUnique({ where: { authId } });
   }
 }

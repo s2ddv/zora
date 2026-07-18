@@ -26,7 +26,7 @@ enum Exchange {
 
 model User {
   id         String   @id @default(cuid())
-  externalId String?  @unique
+  authId     String   @unique   
   email      String   @unique
   name       String?
   createdAt  DateTime @default(now())
@@ -55,13 +55,14 @@ model Wallet {
 }
 
 model WalletAsset {
-  id        String   @id @default(cuid())
-  symbol    String
-  amount    Decimal  @db.Decimal(36, 18)
-  walletId  String
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  walletId   String
+  symbol     String
+  amount     Decimal  @db.Decimal(38, 18)
+  usdValue   Decimal? @db.Decimal(18, 2)
+  updatedAt  DateTime @updatedAt
 
-  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  wallet     Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
 
   @@unique([walletId, symbol])
   @@index([walletId])

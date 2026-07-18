@@ -7,11 +7,22 @@ declare module "fastify" {
   }
 }
 
+/**
+ * @deprecated Use the auth plugin (plugins/auth.ts) instead.
+ * This function is kept for legacy support during migration to Supabase Auth.
+ * It will be removed in Phase 3 final cleanup.
+ */
 export async function requireUserId(
   request: FastifyRequest,
   reply: FastifyReply,
   userRepo: UserRepository
 ): Promise<string | null> {
+  // If auth plugin already set userId, just return it
+  if (request.userId) {
+    return request.userId;
+  }
+
+  // Legacy fallback for X-User-Id header
   const header = request.headers["x-user-id"];
   if (typeof header === "string" && header.length > 0) {
     const user = await userRepo.findById(header);
@@ -23,6 +34,7 @@ export async function requireUserId(
     return user.id;
   }
 
+  // Legacy fallback for DEV_USER_ID env variable
   const devUserId = process.env.DEV_USER_ID;
   if (devUserId) {
     const user = await userRepo.findById(devUserId);
@@ -34,7 +46,7 @@ export async function requireUserId(
 
   reply.status(401).send({
     error: "Authentication required",
-    hint: "Set X-User-Id header or DEV_USER_ID in .env (run db:seed first)",
+    hint: "Use Bearer token in Authorization header or set DEV_USER_ID in .env",
   });
   return null;
 }

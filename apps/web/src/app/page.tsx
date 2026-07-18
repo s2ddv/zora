@@ -1,5 +1,5 @@
 import { WalletCard } from "../components/dashboard/walletCard";
-import { CoinsCard } from "../components/dashboard/coinsCard";
+import { CoinsCard } from "../components/dashboard/CoinsCard";
 
 export default function DashboardPage() {
   return (

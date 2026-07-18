@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import redisPlugin from "./plugins/redis.js";
 import prismaPlugin from "./plugins/prisma.js";
+import authPlugin from "./plugins/auth.js";
 import { healthRoutes } from "./modules/health/health.routes.js";
 import marketRoutes from "./modules/market/market.routes.js";
 import walletRoutes from "./modules/wallet/wallet.routes.js";
@@ -14,6 +15,7 @@ await fastify.register(cors, {
   credentials: true,
 });
 await fastify.register(prismaPlugin);
+await fastify.register(authPlugin);
 await fastify.register(redisPlugin);
 await fastify.register(healthRoutes, { prefix: "/v1/health" });
 await fastify.register(walletRoutes);

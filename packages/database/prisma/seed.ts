@@ -1,10 +1,9 @@
 import { prisma } from "../src/index.js";
 
 const DEMO_USER = {
-  id: "demo_user_zora",
+  authId: "550e8400-e29b-41d4-a716-446655440000", // Demo Supabase Auth UUID
   email: "demo@zora.app",
   name: "Demo User",
-  externalId: "demo_external_auth",
 };
 
 const DEMO_WALLET = {
@@ -15,8 +14,8 @@ const DEMO_WALLET = {
 
 async function main() {
   const user = await prisma.user.upsert({
-    where: { id: DEMO_USER.id },
-    update: { name: DEMO_USER.name },
+    where: { authId: DEMO_USER.authId },
+    update: { email: DEMO_USER.email, name: DEMO_USER.name },
     create: DEMO_USER,
   });
 
@@ -60,7 +59,8 @@ async function main() {
 
   console.log("Seed completed.");
   console.log(`Demo user id: ${user.id}`);
-  console.log(`Set DEV_USER_ID=${user.id} in your .env file`);
+  console.log(`Demo user authId: ${user.authId}`);
+  console.log(`Set DEV_USER_ID=${user.id} in your .env file for development`);
 }
 
 main()

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@kryptonik/shared": "workspace:*",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.7",
     "@tanstack/react-query": "^5.101.2",
     "next": "^16.2.0",
     "react": "^19.2.0",
