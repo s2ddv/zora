@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Chain {
+  ETHEREUM
+  POLYGON
+  ARBITRUM
+  BASE
+  SOLANA
+  BITCOIN
+}
+
+enum Exchange {
+  COINBASE
+  BINANCE
+  KRAKEN
+  BYBIT
+}
+
+model User {
+  id         String   @id @default(cuid())
+  externalId String?  @unique
+  email      String   @unique
+  name       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  wallets             Wallet[]
+  watchlists          Watchlist[]
+  snapshots           PortfolioSnapshot[]
+  exchangeConnections ExchangeConnection[]
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  address   String
+  chain     Chain    @default(ETHEREUM)
+  nickname  String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets WalletAsset[]
+
+  @@unique([userId, address, chain])
+  @@index([userId])
+}
+
+model WalletAsset {
+  id        String   @id @default(cuid())
+  symbol    String
+  amount    Decimal  @db.Decimal(36, 18)
+  walletId  String
+  updatedAt DateTime @updatedAt
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@unique([walletId, symbol])
+  @@index([walletId])
+}
+
+model Watchlist {
+  id        String   @id @default(cuid())
+  coinId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, coinId])
+  @@index([userId])
+}
+
+model PortfolioSnapshot {
+  id        String   @id @default(cuid())
+  totalUsd  Decimal  @db.Decimal(20, 2)
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model ExchangeConnection {
+  id              String   @id @default(cuid())
+  exchange        Exchange
+  encryptedKey    String
+  encryptedSecret String
+  userId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, exchange])
+  @@index([userId])
+}

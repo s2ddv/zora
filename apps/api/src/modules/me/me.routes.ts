@@ -1,0 +1,183 @@
+import type { FastifyInstance } from "fastify";
+import { UserRepository } from "../../repositories/user.repository.js";
+import { requireUserId } from "../../lib/dev-auth.js";
+import { MeWalletsService } from "./me-wallets.service.js";
+import { MeWatchlistsService } from "./me-watchlists.service.js";
+import { MePortfolioService } from "./me-portfolio.service.js";
+import {
+  createSnapshotSchema,
+  createWalletSchema,
+  createWatchlistSchema,
+  snapshotQuerySchema,
+  walletIdParamsSchema,
+  watchlistCoinParamsSchema,
+} from "./me.schema.js";
+
+export default async function meRoutes(fastify: FastifyInstance) {
+  const userRepo = new UserRepository(fastify.prisma);
+  const walletsService = new MeWalletsService(fastify);
+  const watchlistsService = new MeWatchlistsService(fastify);
+  const portfolioService = new MePortfolioService(fastify);
+
+  async function auth(request: Parameters<typeof requireUserId>[0], reply: Parameters<typeof requireUserId>[1]) {
+    return requireUserId(request, reply, userRepo);
+  }
+
+  // Wallets
+  fastify.get("/v1/me/wallets", async (request, reply) => {
+    const userId = await auth(request, reply);
+    if (!userId) return;
+    return reply.send(await walletsService.list(userId));
+  });
+
+  fastify.post("/v1/me/wallets", async (request, reply) => {
+    const userId = await auth(request, reply);
+    if (!userId) return;
+
+    const parsed = createWalletSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.status(400).send({ error: parsed.error.flatten() });
+    }
+
+    try {
+      const wallet = await walletsService.create(userId, parsed.data);
+      return reply.status(201).send(wallet);
+    } catch (err: unknown) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "code" in err &&
+        err.code === "P2002"
+      ) {
+        return reply.status(409).send({ error: "Wallet already exists" });
+      }
+      throw err;
+    }
+  });
+
+  fastify.delete<{ Params: { id: string } }>(
+    "/v1/me/wallets/:id",
+    async (request, reply) => {
+      const userId = await auth(request, reply);
+      if (!userId) return;
+
+      const params = walletIdParamsSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply.status(400).send({ error: "Invalid wallet id" });
+      }
+
+      const removed = await walletsService.remove(params.data.id, userId);
+      if (!removed) {
+        return reply.status(404).send({ error: "Wallet not found" });
+      }
+      return reply.status(204).send();
+    }
+  );
+
+  fastify.post<{ Params: { id: string } }>(
+    "/v1/me/wallets/:id/sync",
+    async (request, reply) => {
+      const userId = await auth(request, reply);
+      if (!userId) return;
+
+      const params = walletIdParamsSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply.status(400).send({ error: "Invalid wallet id" });
+      }
+
+      const wallet = await walletsService.sync(params.data.id, userId);
+      if (!wallet) {
+        return reply.status(404).send({ error: "Wallet not found" });
+      }
+      return reply.send(wallet);
+    }
+  );
+
+  // Watchlists
+  fastify.get("/v1/me/watchlists", async (request, reply) => {
+    const userId = await auth(request, reply);
+    if (!userId) return;
+    return reply.send(await watchlistsService.list(userId));
+  });
+
+  fastify.post("/v1/me/watchlists", async (request, reply) => {
+    const userId = await auth(request, reply);
+    if (!userId) return;
+
+    const parsed = createWatchlistSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.status(400).send({ error: parsed.error.flatten() });
+    }
+
+    try {
+      const item = await watchlistsService.add(userId, parsed.data.coinId);
+      return reply.status(201).send(item);
+    } catch (err: unknown) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "code" in err &&
+        err.code === "P2002"
+      ) {
+        return reply.status(409).send({ error: "Coin already in watchlist" });
+      }
+      throw err;
+    }
+  });
+
+  fastify.delete<{ Params: { coinId: string } }>(
+    "/v1/me/watchlists/:coinId",
+    async (request, reply) => {
+      const userId = await auth(request, reply);
+      if (!userId) return;
+
+      const params = watchlistCoinParamsSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply.status(400).send({ error: "Invalid coin id" });
+      }
+
+      const removed = await watchlistsService.remove(
+        userId,
+        params.data.coinId
+      );
+      if (!removed) {
+        return reply.status(404).send({ error: "Watchlist item not found" });
+      }
+      return reply.status(204).send();
+    }
+  );
+
+  // Portfolio snapshots
+  fastify.get<{ Querystring: { limit?: string } }>(
+    "/v1/me/portfolio/snapshots",
+    async (request, reply) => {
+      const userId = await auth(request, reply);
+      if (!userId) return;
+
+      const query = snapshotQuerySchema.safeParse(request.query);
+      if (!query.success) {
+        return reply.status(400).send({ error: query.error.flatten() });
+      }
+
+      return reply.send(
+        await portfolioService.listSnapshots(userId, query.data.limit)
+      );
+    }
+  );
+
+  fastify.post("/v1/me/portfolio/snapshots", async (request, reply) => {
+    const userId = await auth(request, reply);
+    if (!userId) return;
+
+    const parsed = createSnapshotSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.status(400).send({ error: parsed.error.flatten() });
+    }
+
+    const snapshot = await portfolioService.createSnapshot(
+      userId,
+      parsed.data.totalUsd
+    );
+    return reply.status(201).send(snapshot);
+  });
+}

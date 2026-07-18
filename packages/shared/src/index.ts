@@ -1,6 +1,7 @@
 export type AssetSymbol = "BTC" | "ETH" | "USDC" | "USDT" | string;
 export * from "./market.js";
 export * from "./wallet.js";
+export * from "./database.js";
 
 export interface ApiResponse<T> {
   data: T;

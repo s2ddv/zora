@@ -7,13 +7,24 @@
     "node": ">=24.0.0",
     "pnpm": ">=10.0.0"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@prisma/client", "@prisma/engines", "prisma"]
+  },
   "scripts": {
     "dev": "pnpm --parallel --filter @kryptonik/web --filter @kryptonik/api dev",
     "dev:web": "pnpm --filter @kryptonik/web dev",
     "dev:api": "pnpm --filter @kryptonik/api dev",
-    "build": "pnpm --filter @kryptonik/web build && pnpm --filter @kryptonik/api build",
+    "build": "pnpm --filter @kryptonik/database generate && pnpm --filter @kryptonik/web build && pnpm --filter @kryptonik/api build",
     "lint": "pnpm --parallel --filter @kryptonik/web --filter @kryptonik/api lint",
-    "typecheck": "pnpm --parallel --filter @kryptonik/web --filter @kryptonik/api typecheck"
+    "typecheck": "pnpm --parallel --filter @kryptonik/web --filter @kryptonik/api --filter @kryptonik/database --filter @kryptonik/shared typecheck",
+    "db:generate": "pnpm --filter @kryptonik/database generate",
+    "db:migrate": "pnpm --filter @kryptonik/database migrate",
+    "db:migrate:deploy": "pnpm --filter @kryptonik/database migrate:deploy",
+    "db:push": "pnpm --filter @kryptonik/database push",
+    "db:seed": "pnpm --filter @kryptonik/database seed",
+    "db:studio": "pnpm --filter @kryptonik/database studio",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
   },
   "dependencies": {
     "cors": "^2.8.6",
