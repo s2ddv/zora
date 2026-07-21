@@ -57,17 +57,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-zinc-950">
+    <div className="relative min-h-screen bg-white">
+      {}
       <div className="absolute left-8 top-8">
-        <ZoraLogo className="h-8 w-8 text-emerald-400" />
+        <ZoraLogo className="h-8 w-8 text-[#241350]" />
       </div>
 
       <div className="flex min-h-screen flex-col items-center justify-center px-4">
-        <div className="w-full max-w-[360px]">
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-semibold text-white">Sign in to Zora</h1>
+        {}
+        <div className="w-full max-w-[440px]">
+          {}
+          <div className="mb-10 w-full text-center">
+            <h1
+              style={{ fontSize: '32px', textAlign: 'center' }}
+              className="whitespace-nowrap font-semibold leading-tight text-zinc-900"
+            >
+              Sign in to Zora
+            </h1>
           </div>
 
+          {}
           <form onSubmit={handleContinue} className="space-y-4">
             <div>
               <input
@@ -78,7 +87,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="w-full rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-3.5 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-emerald-500 disabled:opacity-50"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-4 text-[15px] text-zinc-900 placeholder:text-zinc-500 outline-none transition focus:border-[#241350] disabled:opacity-50"
               />
             </div>
 
@@ -91,40 +100,46 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-3.5 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-emerald-500"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-4 text-[15px] text-zinc-900 placeholder:text-zinc-500 outline-none transition focus:border-[#241350]"
                 />
               </div>
             )}
 
-            {error && <p className="text-sm text-red-400">{error}</p>}
+            {error && <p className="text-sm text-red-500">{error}</p>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-emerald-500 py-3.5 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:opacity-50"
+              className="w-full rounded-xl bg-[#241350] py-4 text-[15px] font-semibold text-white transition hover:bg-[#32195e] disabled:opacity-50"
             >
               {loading ? 'Signing in...' : 'Continue'}
             </button>
           </form>
 
+          {}
           <div className="my-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-zinc-800" />
-            <span className="text-xs font-medium text-zinc-600">OR</span>
-            <div className="h-px flex-1 bg-zinc-800" />
+            <div className="h-px flex-1 bg-zinc-200" />
+            <span className="text-xs font-medium text-zinc-500">OR</span>
+            <div className="h-px flex-1 bg-zinc-200" />
           </div>
 
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/40 py-3.5 text-sm font-medium text-white transition hover:bg-zinc-900 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-zinc-300 bg-white py-4 text-[15px] font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:opacity-50"
           >
             <GoogleIcon className="h-4 w-4" />
             Sign in with Google
           </button>
 
-          <p className="mt-8 text-center text-white">
-            Don't have an account?{' '}
-            <Link href="/signup" className="font-medium text-sm-400 hover:underline">
+          {}
+          <p className="mt-8 text-center text-sm" style={{ color: '#000000' }}>
+            Don&apos;t have an account?{' '}
+            <Link
+              href="/signup"
+              className="font-medium hover:underline"
+              style={{ color: '#241350' }}
+            >
               Create account
             </Link>
           </p>
