@@ -1,19 +1,17 @@
-import "./globals.css";
-import { Providers } from "./providers";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import { GeistSans } from 'geist/font/sans'
+import '@/app/globals.css'
+import { Providers } from './providers'
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className={inter.className}>
+    <html lang="pt-BR" className={GeistSans.className}>
       <body>
         <Providers>{children}</Providers>
       </body>
     </html>
-  );
+  )
 }

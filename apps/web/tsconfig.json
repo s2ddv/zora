@@ -3,6 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler",
+    "module": "esnext",
     "paths": {
       "@/*": ["./src/*"]
     },
